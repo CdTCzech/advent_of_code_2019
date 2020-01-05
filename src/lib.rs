@@ -3,26 +3,20 @@
 extern crate test;
 
 use std::collections::HashMap;
-use std::fs::{self, File};
-use std::io::{BufRead, BufReader};
 
-pub fn day_01_1() -> i32 {
-    let file = File::open("inputs/day1.txt").unwrap();
-    let reader = BufReader::new(file);
+pub fn day_01_1(file: &str) -> i32 {
     let mut sum = 0;
-    for line in reader.lines() {
-        let num = line.unwrap().parse::<i32>().unwrap();
+    for line in file.lines() {
+        let num = line.parse::<i32>().unwrap();
         sum += num / 3 - 2;
     }
     sum
 }
 
-pub fn day_01_2() -> i32 {
-    let file = File::open("inputs/day1.txt").unwrap();
-    let reader = BufReader::new(file);
+pub fn day_01_2(file: &str) -> i32 {
     let mut sum = 0;
-    for line in reader.lines() {
-        let mut num = line.unwrap().parse::<i32>().unwrap();
+    for line in file.lines() {
+        let mut num = line.parse::<i32>().unwrap();
         loop {
             num = num / 3 - 2;
             if num < 1 {
@@ -52,14 +46,12 @@ fn day_02_inner(mut content: Vec<i32>, first: i32, second: i32) -> Option<i32> {
     Some(content[0])
 }
 
-pub fn day_02_1() -> i32 {
-    let file = fs::read_to_string("inputs/day2.txt").unwrap();
+pub fn day_02_1(file: &str) -> i32 {
     let content: Vec<i32> = file.split(',').map(|x| x.parse::<i32>().unwrap()).collect();
     day_02_inner(content, 12, 2).unwrap()
 }
 
-pub fn day_02_2() -> i32 {
-    let file = fs::read_to_string("inputs/day2.txt").unwrap();
+pub fn day_02_2(file: &str) -> i32 {
     let content: Vec<i32> = file.split(',').map(|x| x.parse::<i32>().unwrap()).collect();
     for i in 0..99 {
         for j in 0..99 {
@@ -87,8 +79,7 @@ fn day_03_helper(direction: &str, current: &mut Point) {
     };
 }
 
-fn day_03_inner() -> (i32, i32) {
-    let file = fs::read_to_string("inputs/day3.txt").unwrap();
+fn day_03_inner(file: &str) -> (i32, i32) {
     let lines: Vec<&str> = file.split("\r\n").collect();
     let mut wire_1 = HashMap::new();
     let mut current = Point { x: 0, y: 0 };
@@ -125,46 +116,53 @@ fn day_03_inner() -> (i32, i32) {
     (closest, fewest)
 }
 
-pub fn day_03_1() -> i32 {
-    day_03_inner().0
+pub fn day_03_1(file: &str) -> i32 {
+    day_03_inner(&file).0
 }
 
-pub fn day_03_2() -> i32 {
-    day_03_inner().1
+pub fn day_03_2(file: &str) -> i32 {
+    day_03_inner(&file).1
 }
 
 #[cfg(test)]
 mod day {
     use super::*;
+    use std::fs;
     use test::Bencher;
 
     #[bench]
     fn _01_1(b: &mut Bencher) {
-        b.iter(|| assert_eq!(day_01_1(), 3_305_301));
+        let file = fs::read_to_string("inputs/day1.txt").unwrap();
+        b.iter(|| assert_eq!(day_01_1(&file), 3_305_301));
     }
 
     #[bench]
     fn _01_2(b: &mut Bencher) {
-        b.iter(|| assert_eq!(day_01_2(), 4_955_106));
+        let file = fs::read_to_string("inputs/day1.txt").unwrap();
+        b.iter(|| assert_eq!(day_01_2(&file), 4_955_106));
     }
 
     #[bench]
     fn _02_1(b: &mut Bencher) {
-        b.iter(|| assert_eq!(day_02_1(), 7_210_630));
+        let file = fs::read_to_string("inputs/day2.txt").unwrap();
+        b.iter(|| assert_eq!(day_02_1(&file), 7_210_630));
     }
 
     #[bench]
     fn _02_2(b: &mut Bencher) {
-        b.iter(|| assert_eq!(day_02_2(), 3_892));
+        let file = fs::read_to_string("inputs/day2.txt").unwrap();
+        b.iter(|| assert_eq!(day_02_2(&file), 3_892));
     }
 
     #[bench]
     fn _03_1(b: &mut Bencher) {
-        b.iter(|| assert_eq!(day_03_1(), 1_264));
+        let file = fs::read_to_string("inputs/day3.txt").unwrap();
+        b.iter(|| assert_eq!(day_03_1(&file), 1_264));
     }
 
     #[bench]
     fn _03_2(b: &mut Bencher) {
-        b.iter(|| assert_eq!(day_03_2(), 37_390));
+        let file = fs::read_to_string("inputs/day3.txt").unwrap();
+        b.iter(|| assert_eq!(day_03_2(&file), 37_390));
     }
 }
