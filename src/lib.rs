@@ -1,8 +1,12 @@
+#![feature(test)]
+
+extern crate test;
+
 use std::collections::HashMap;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader};
 
-fn day_1_1() -> i32 {
+pub fn day_01_1() -> i32 {
     let file = File::open("inputs/day1.txt").unwrap();
     let reader = BufReader::new(file);
     let mut sum = 0;
@@ -13,7 +17,7 @@ fn day_1_1() -> i32 {
     sum
 }
 
-fn day_1_2() -> i32 {
+pub fn day_01_2() -> i32 {
     let file = File::open("inputs/day1.txt").unwrap();
     let reader = BufReader::new(file);
     let mut sum = 0;
@@ -30,7 +34,7 @@ fn day_1_2() -> i32 {
     sum
 }
 
-fn day_2_inner(mut content: Vec<i32>, first: i32, second: i32) -> Option<i32> {
+fn day_02_inner(mut content: Vec<i32>, first: i32, second: i32) -> Option<i32> {
     content[1] = first;
     content[2] = second;
     let mut index = 0;
@@ -48,18 +52,18 @@ fn day_2_inner(mut content: Vec<i32>, first: i32, second: i32) -> Option<i32> {
     Some(content[0])
 }
 
-fn day_2_1() -> i32 {
+pub fn day_02_1() -> i32 {
     let file = fs::read_to_string("inputs/day2.txt").unwrap();
     let content: Vec<i32> = file.split(',').map(|x| x.parse::<i32>().unwrap()).collect();
-    day_2_inner(content, 12, 2).unwrap()
+    day_02_inner(content, 12, 2).unwrap()
 }
 
-fn day_2_2() -> i32 {
+pub fn day_02_2() -> i32 {
     let file = fs::read_to_string("inputs/day2.txt").unwrap();
     let content: Vec<i32> = file.split(',').map(|x| x.parse::<i32>().unwrap()).collect();
     for i in 0..99 {
         for j in 0..99 {
-            if day_2_inner(content.clone(), i, j) == Some(19_690_720) {
+            if day_02_inner(content.clone(), i, j) == Some(19_690_720) {
                 return 100 * i + j;
             }
         }
@@ -73,7 +77,17 @@ struct Point {
     y: i32,
 }
 
-fn day_3_inner() -> (i32, i32) {
+fn day_03_helper(direction: &str, current: &mut Point) {
+    match direction.get(0..1).unwrap() {
+        "D" => current.y -= 1,
+        "L" => current.x -= 1,
+        "R" => current.x += 1,
+        "U" => current.y += 1,
+        _ => panic!("Unknown direction"),
+    };
+}
+
+fn day_03_inner() -> (i32, i32) {
     let file = fs::read_to_string("inputs/day3.txt").unwrap();
     let lines: Vec<&str> = file.split("\r\n").collect();
     let mut wire_1 = HashMap::new();
@@ -82,13 +96,7 @@ fn day_3_inner() -> (i32, i32) {
     for direction in lines[0].split(',').collect::<Vec<&str>>() {
         let num = direction[1..].parse::<i32>().unwrap();
         for _ in 0..num {
-            match direction.get(0..1).unwrap() {
-                "D" => current.y -= 1,
-                "L" => current.x -= 1,
-                "R" => current.x += 1,
-                "U" => current.y += 1,
-                _ => panic!("Unknown direction"),
-            };
+            day_03_helper(direction, &mut current);
             step += 1;
             wire_1.insert(current, step);
         }
@@ -100,13 +108,7 @@ fn day_3_inner() -> (i32, i32) {
     for direction in lines[1].split(',').collect::<Vec<&str>>() {
         let num = direction[1..].parse::<i32>().unwrap();
         for _ in 0..num {
-            match direction.get(0..1).unwrap() {
-                "D" => current.y -= 1,
-                "L" => current.x -= 1,
-                "R" => current.x += 1,
-                "U" => current.y += 1,
-                _ => panic!("Unknown direction"),
-            };
+            day_03_helper(direction, &mut current);
             step += 1;
             if wire_1.contains_key(&current) {
                 let diff = current.x.abs() + current.y.abs();
@@ -123,19 +125,46 @@ fn day_3_inner() -> (i32, i32) {
     (closest, fewest)
 }
 
-fn day_3_1() -> i32 {
-    day_3_inner().0
+pub fn day_03_1() -> i32 {
+    day_03_inner().0
 }
 
-fn day_3_2() -> i32 {
-    day_3_inner().1
+pub fn day_03_2() -> i32 {
+    day_03_inner().1
 }
 
-fn main() {
-    assert_eq!(day_1_1(), 3_305_301);
-    assert_eq!(day_1_2(), 4_955_106);
-    assert_eq!(day_2_1(), 7_210_630);
-    assert_eq!(day_2_2(), 3_892);
-    assert_eq!(day_3_1(), 1_264);
-    assert_eq!(day_3_2(), 37_390);
+#[cfg(test)]
+mod day {
+    use super::*;
+    use test::Bencher;
+
+    #[bench]
+    fn _01_1(b: &mut Bencher) {
+        b.iter(|| assert_eq!(day_01_1(), 3_305_301));
+    }
+
+    #[bench]
+    fn _01_2(b: &mut Bencher) {
+        b.iter(|| assert_eq!(day_01_2(), 4_955_106));
+    }
+
+    #[bench]
+    fn _02_1(b: &mut Bencher) {
+        b.iter(|| assert_eq!(day_02_1(), 7_210_630));
+    }
+
+    #[bench]
+    fn _02_2(b: &mut Bencher) {
+        b.iter(|| assert_eq!(day_02_2(), 3_892));
+    }
+
+    #[bench]
+    fn _03_1(b: &mut Bencher) {
+        b.iter(|| assert_eq!(day_03_1(), 1_264));
+    }
+
+    #[bench]
+    fn _03_2(b: &mut Bencher) {
+        b.iter(|| assert_eq!(day_03_2(), 37_390));
+    }
 }

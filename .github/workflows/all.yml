@@ -15,15 +15,15 @@ jobs:
 
       - name: Install rust-src
         run: rustup default nightly; rustup component add rust-src
-      
+
       - name: Build repository
         run: cargo build
-        
+
       - name: Check formatting
         run: cargo fmt -- --check --verbose
 
       - name: Run Clippy
         run: cargo clippy
 
-      - name: Run binary
-        run: cargo run
+      - name: Run benchmarks/tests
+        run: cargo bench
