@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 fn i32_to_vec_u32(number: i32) -> Vec<u32> {
     number
         .to_string()
@@ -17,11 +19,13 @@ fn add_one(number: &mut Vec<u32>, index: usize) {
 fn first_check_doubles(number: &mut Vec<u32>) -> i32 {
     let mut double = 0;
     for i in (0..5).rev() {
-        if number[i] > number[i + 1] {
-            double = 0;
-            break;
-        } else if number[i] == number[i + 1] {
-            double += 1;
+        match number[i].cmp(&number[i + 1]) {
+            Ordering::Greater => {
+                double = 0;
+                break;
+            }
+            Ordering::Equal => double += 1,
+            Ordering::Less => (),
         }
     }
     double
@@ -31,17 +35,19 @@ fn second_check_doubles(number: &mut Vec<u32>) -> i32 {
     let mut double = 0;
     let mut repeats = 0;
     for i in (0..5).rev() {
-        if number[i] > number[i + 1] {
-            double = 0;
-            repeats = 0;
-            break;
-        } else if number[i] == number[i + 1] {
-            repeats += 1;
-        } else {
-            if repeats == 1 {
-                double += 1;
+        match number[i].cmp(&number[i + 1]) {
+            Ordering::Greater => {
+                double = 0;
+                repeats = 0;
+                break;
             }
-            repeats = 0;
+            Ordering::Equal => repeats += 1,
+            Ordering::Less => {
+                if repeats == 1 {
+                    double += 1;
+                }
+                repeats = 0;
+            }
         }
     }
     if repeats == 1 {
