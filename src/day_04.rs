@@ -1,37 +1,49 @@
 use std::cmp::Ordering;
 
-fn i32_to_vec_u32(number: i32) -> Vec<u32> {
+fn i32_to_vec_u8(number: i32) -> Vec<u8> {
     number
         .to_string()
         .chars()
-        .map(|d| d.to_digit(10).unwrap())
+        .map(|d| d.to_digit(10).unwrap() as u8)
         .collect()
 }
 
-fn add_one(number: &mut Vec<u32>, index: usize) {
-    number[index] += 1;
-    if number[index] == 10 {
-        number[index] = 0;
-        add_one(number, index - 1);
+fn make_incremental(start: &mut i32, number: &mut Vec<u8>) {
+    let mut mul = 10_000;
+    for i in 0..5 {
+        if number[i] > number[i + 1] {
+            *start += (number[i] - number[i + 1]) as i32 * mul;
+            number[i + 1] = number[i];
+        }
+        mul /= 10;
     }
 }
 
-fn first_check_doubles(number: &mut Vec<u32>) -> i32 {
+fn add_one(start: &mut i32, number: &mut Vec<u8>, index: usize) {
+    number[index] += 1;
+    if number[index] == 10 {
+        number[index] = 0;
+        add_one(start, number, index - 1);
+        if index == 5 {
+            make_incremental(start, number)
+        }
+    }
+    if index == 5 {
+        *start += 1;
+    }
+}
+
+fn first_check_doubles(number: &mut Vec<u8>) -> i32 {
     let mut double = 0;
     for i in (0..5).rev() {
-        match number[i].cmp(&number[i + 1]) {
-            Ordering::Greater => {
-                double = 0;
-                break;
-            }
-            Ordering::Equal => double += 1,
-            Ordering::Less => (),
+        if number[i] == number[i + 1] {
+            double += 1;
         }
     }
     double
 }
 
-fn second_check_doubles(number: &mut Vec<u32>) -> i32 {
+fn second_check_doubles(number: &mut Vec<u8>) -> i32 {
     let mut double = 0;
     let mut repeats = 0;
     for i in (0..5).rev() {
@@ -56,17 +68,16 @@ fn second_check_doubles(number: &mut Vec<u32>) -> i32 {
     double
 }
 
-fn implementation(mut start: i32, end: i32, check_doubles: fn(&mut Vec<u32>) -> i32) -> i32 {
-    let mut number: Vec<u32> = i32_to_vec_u32(start);
-    let number_last_index = number.len() - 1;
+fn implementation(mut start: i32, end: i32, check_doubles: fn(&mut Vec<u8>) -> i32) -> i32 {
+    let mut number = i32_to_vec_u8(start);
     let mut result = 0;
-    while start != end {
+    make_incremental(&mut start, &mut number);
+    while start < end {
         let double = check_doubles(&mut number);
         if double > 0 {
             result += 1;
         }
-        add_one(&mut number, number_last_index);
-        start += 1;
+        add_one(&mut start, &mut number, 5);
     }
     result
 }
