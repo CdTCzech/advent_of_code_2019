@@ -60,6 +60,12 @@ mod day {
         let file_05 = fs::read_to_string("inputs/day_05.txt").unwrap();
         b.iter(|| assert_eq!(advent_of_code_2019::day_05::first(&file_05, 1), 6_761_139));
     }
+
+    #[bench]
+    fn _05_2(b: &mut Bencher) {
+        let file_05 = fs::read_to_string("inputs/day_05.txt").unwrap();
+        b.iter(|| assert_eq!(advent_of_code_2019::day_05::second(&file_05, 5), 9_217_546));
+    }
 }
 
 fn main() {
@@ -77,4 +83,5 @@ fn main() {
     assert_eq!(advent_of_code_2019::day_04::second(168_630, 718_098), 1_145);
     let file_05 = fs::read_to_string("inputs/day_05.txt").unwrap();
     assert_eq!(advent_of_code_2019::day_05::first(&file_05, 1), 6_761_139);
+    assert_eq!(advent_of_code_2019::day_05::second(&file_05, 5), 9_217_546);
 }
