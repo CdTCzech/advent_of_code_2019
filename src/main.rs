@@ -64,7 +64,12 @@ mod day {
     #[bench]
     fn _05_2(b: &mut Bencher) {
         let file_05 = fs::read_to_string("inputs/day_05.txt").unwrap();
-        b.iter(|| assert_eq!(advent_of_code_2019::day_05::second(&file_05, 5), 9_217_546));
+        b.iter(|| {
+            assert_eq!(
+                advent_of_code_2019::day_05::second(&file_05, &vec![5]),
+                9_217_546
+            )
+        });
     }
 
     #[bench]
@@ -77,6 +82,12 @@ mod day {
     fn _06_2(b: &mut Bencher) {
         let file_06 = fs::read_to_string("inputs/day_06.txt").unwrap();
         b.iter(|| assert_eq!(advent_of_code_2019::day_06::second(&file_06), 388));
+    }
+
+    #[bench]
+    fn _07_1(b: &mut Bencher) {
+        let file_07 = fs::read_to_string("inputs/day_07.txt").unwrap();
+        b.iter(|| assert_eq!(advent_of_code_2019::day_07::first(&file_07), 47_064));
     }
 }
 
@@ -95,8 +106,13 @@ fn main() {
     assert_eq!(advent_of_code_2019::day_04::second(168_630, 718_098), 1_145);
     let file_05 = fs::read_to_string("inputs/day_05.txt").unwrap();
     assert_eq!(advent_of_code_2019::day_05::first(&file_05, 1), 6_761_139);
-    assert_eq!(advent_of_code_2019::day_05::second(&file_05, 5), 9_217_546);
+    assert_eq!(
+        advent_of_code_2019::day_05::second(&file_05, &vec![5]),
+        9_217_546
+    );
     let file_06 = fs::read_to_string("inputs/day_06.txt").unwrap();
     assert_eq!(advent_of_code_2019::day_06::first(&file_06), 271_151);
     assert_eq!(advent_of_code_2019::day_06::second(&file_06), 388);
+    let file_07 = fs::read_to_string("inputs/day_07.txt").unwrap();
+    assert_eq!(advent_of_code_2019::day_07::first(&file_07), 47_064);
 }

@@ -14,7 +14,7 @@ impl Instruction {
     }
 }
 
-fn get_two_parameters(content: &Vec<i32>, ins: &Instruction, index: usize) -> (i32, i32) {
+fn get_two_parameters(content: &[i32], ins: &Instruction, index: usize) -> (i32, i32) {
     let first = match ins.c {
         0 => content[content[index + 1] as usize],
         1 => content[index + 1],
@@ -29,8 +29,8 @@ fn get_two_parameters(content: &Vec<i32>, ins: &Instruction, index: usize) -> (i
 }
 
 pub fn first(file: &str, input: i32) -> i32 {
-    let mut result = 0;
     let mut content: Vec<i32> = file.split(',').map(|x| x.parse::<i32>().unwrap()).collect();
+    let mut result = 0;
     let mut index = 0;
     while content[index] != 99 {
         let ins = Instruction::new(content[index]);
@@ -64,9 +64,10 @@ pub fn first(file: &str, input: i32) -> i32 {
     result
 }
 
-pub fn second(file: &str, input: i32) -> i32 {
-    let mut result = 0;
+pub fn second(file: &str, input: &Vec<i32>) -> i32 {
     let mut content: Vec<i32> = file.split(',').map(|x| x.parse::<i32>().unwrap()).collect();
+    let mut next_input = input.iter();
+    let mut result = 0;
     let mut index = 0;
     while content[index] != 99 {
         let ins = Instruction::new(content[index]);
@@ -83,7 +84,7 @@ pub fn second(file: &str, input: i32) -> i32 {
             }
             3 => {
                 let res_index = content[index + 1] as usize;
-                content[res_index] = input;
+                content[res_index] = *next_input.next().unwrap();
                 index += 2;
             }
             4 => {

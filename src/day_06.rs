@@ -27,7 +27,7 @@ fn distance(
     };
     visited.insert(current.to_string());
     for neighbor in neighbors {
-        if visited.contains(&neighbor.to_string()) {
+        if visited.contains(&(*neighbor).to_string()) {
             continue;
         }
         let res = distance(map, neighbor, wanted, depth + 1, visited);
@@ -43,7 +43,7 @@ pub fn first(file: &str) -> i32 {
     let mut sum = 0;
     for line in file.lines() {
         let connection: Vec<&str> = line.split(')').collect();
-        let value = map.entry(connection[0]).or_insert(HashSet::new());
+        let value = map.entry(connection[0]).or_insert_with(HashSet::new);
         value.insert(connection[1]);
     }
     sum_orbits(&map, "COM", 1, &mut sum);
@@ -54,10 +54,10 @@ pub fn second(file: &str) -> i32 {
     let mut map: HashMap<&str, HashSet<&str>> = HashMap::new();
     for line in file.lines() {
         let connection: Vec<&str> = line.split(')').collect();
-        let value1 = map.entry(connection[0]).or_insert(HashSet::new());
+        let value1 = map.entry(connection[0]).or_insert_with(HashSet::new);
         value1.insert(connection[1]);
-        let value2 = map.entry(connection[1]).or_insert(HashSet::new());
+        let value2 = map.entry(connection[1]).or_insert_with(HashSet::new);
         value2.insert(connection[0]);
     }
-    distance(&map, "YOU", "SAN", 0, &mut HashSet::new())
+    distance(&map, "YOU", "SAN", 0, &mut HashSet::new()) - 2
 }
